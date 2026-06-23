@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Palomar College website status page. Check here for updates when palomar.edu is temporarily unavailable.">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Palomar College — Website Status</title>
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES (Brand Colors)
+    ============================================= */
+    :root {
+      --color-red: #e9171f;
+      --color-silver: #b4babc;
+      --color-gold: #fed184;
+      --color-black: #000000;
+      --color-white: #ffffff;
+      --color-bg: #f5f5f5;
+      --color-text: #1a1a1a;
+      --font-stack: "Gill Sans", "Gill Sans MT", Arial, Helvetica, sans-serif;
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+    }
+
+    /* =============================================
+       SKIP NAVIGATION (visually hidden until focused)
+    ============================================= */
+    .skip-nav {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      z-index: 9999;
+      background: var(--color-gold);
+      color: var(--color-black);
+      font-weight: bold;
+      padding: 0.75rem 1.25rem;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+    }
+
+    .skip-nav:focus {
+      top: 0;
+      left: 0;
+    }
+
+    /* =============================================
+       FOCUS STYLES (WCAG AA — visible focus)
+    ============================================= */
+    :focus-visible {
+      outline: 3px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    .site-header {
+      background-color: var(--color-red);
+      color: var(--color-white);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .site-header__wordmark {
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .site-header__tagline {
+      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      font-style: italic;
+      margin-top: 0.35rem;
+      opacity: 0.92;
+    }
+
+    /* =============================================
+       MAIN CONTENT
+    ============================================= */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2.5rem;
+    }
+
+    /* =============================================
+       STATUS BANNER
+    ============================================= */
+    .status-banner {
+      margin: 2rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* --- OUTAGE STATE (default, active) --- */
+    .status-banner--outage {
+      background-color: #fff3cd;
+      border: 2px solid var(--color-red);
+    }
+
+    .status-banner--outage .status-banner__header {
+      background-color: var(--color-red);
+      color: var(--color-white);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .status-banner--outage .status-banner__icon {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .status-banner--outage .status-banner__title {
+      font-size: clamp(1.25rem, 3vw, 1.55rem);
+      font-weight: 700;
+    }
+
+    .status-banner__body {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .status-banner__timestamp {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #5a3000;
+      margin-bottom: 0.75rem;
+    }
+
+    .status-banner__message {
+      font-size: 1.125rem;
+      color: var(--color-text);
+      line-height: 1.65;
+    }
+
+    /* --- RESOLVED / MAINTENANCE STATE (hidden by default) --- */
+    .status-banner--resolved {
+      background-color: #d4edda;
+      border: 2px solid #28a745;
+    }
+
+    .status-banner--resolved .status-banner__header {
+      background-color: #28a745;
+      color: var(--color-white);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .status-banner--resolved .status-banner__icon {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .status-banner--resolved .status-banner__title {
+      font-size: clamp(1.25rem, 3vw, 1.55rem);
+      font-weight: 700;
+    }
+
+    .status-banner--resolved .status-banner__timestamp {
+      color: #155724;
+    }
+
+    .status-banner--resolved .status-banner__message {
+      color: #155724;
+    }
+
+    /* =============================================
+       SECTION HEADINGS
+    ============================================= */
+    .section-heading {
+      font-size: clamp(1.4rem, 3vw, 1.85rem);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--color-red);
+      display: inline-block;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    .section-intro {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.125rem;
+      color: #444;
+    }
+
+    /* =============================================
+       QUICK LINKS GRID
+    ============================================= */
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    @media (max-width: 780px) {
+      .quick-links-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quick-links-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quick-link-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-left: 4px solid transparent;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-left-color 0.18s ease;
+    }
+
+    .quick-link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.13);
+      border-left-color: var(--color-red);
+    }
+
+    .quick-link-card a {
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      height: 100%;
+    }
+
+    .quick-link-card a:focus-visible {
+      border-radius: 6px;
+    }
+
+    .quick-link-card__icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.6rem;
+      line-height: 1;
+    }
+
+    .quick-link-card__title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-red);
+      margin-bottom: 0.35rem;
+    }
+
+    .quick-link-card__desc {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* =============================================
+       CONTACT CARDS GRID
+    ============================================= */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    @media (max-width: 600px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .contact-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-left: 4px solid var(--color-red);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      padding: 1.35rem 1.25rem;
+    }
+
+    .contact-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-red);
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-card p,
+    .contact-card li {
+      font-size: 1.05rem;
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    .contact-card ul {
+      list-style: none;
+      margin-top: 0.6rem;
+    }
+
+    .contact-card li {
+      padding: 0.1rem 0;
+    }
+
+    .contact-card a {
+      color: var(--color-red);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .contact-card a:hover {
+      color: #b00d14;
+    }
+
+    .contact-subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      font-style: italic;
+      margin-bottom: 0.65rem;
+    }
+
+    /* =============================================
+       CAMPUS LOCATIONS
+    ============================================= */
+    .locations-note {
+      font-size: 1.05rem;
+      color: #555;
+      margin-top: 1rem;
+    }
+
+    .locations-note a {
+      color: var(--color-red);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .locations-list {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .locations-list li {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-radius: 6px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 0.6rem;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .location-name {
+      font-weight: 700;
+      display: block;
+    }
+
+    .location-detail {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .site-footer {
+      background-color: var(--color-text);
+      color: var(--color-white);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .site-footer p {
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .site-footer .footer-note {
+      font-style: italic;
+      opacity: 0.7;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--color-gold);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-size: 1rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-white);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================================================
+       SKIP NAVIGATION
+  ================================================ -->
+  <a class="skip-nav" href="#main-content">Skip to main content</a>
+
+  <!-- ================================================
+       SITE HEADER
+  ================================================ -->
+  <header class="site-header" role="banner">
+    <p class="site-header__wordmark" aria-label="Palomar College">PALOMAR COLLEGE</p>
+    <p class="site-header__tagline">Learning for Success.</p>
+  </header>
+
+  <!-- ================================================
+       MAIN CONTENT
+  ================================================ -->
+  <main id="main-content">
+
+    <!-- ============================================
+         SECTION 1: WEBSITE STATUS BANNER
+
+         HOW TO UPDATE THIS BANNER:
+         ─────────────────────────────────────────────
+         DURING AN OUTAGE (default state shown):
+           1. Find the block labeled "OUTAGE BANNER - SHOW THIS DURING AN OUTAGE"
+           2. Update the timestamp in the "Last Updated" line
+           3. Update the message text as needed
+           4. Leave this block uncommented (visible)
+           5. Make sure the RESOLVED BANNER block below stays commented out
+
+         WHEN SERVICE IS RESTORED:
+           1. Find the section labeled "OUTAGE BANNER - SHOW THIS DURING AN OUTAGE"
+           2. To hide it, add  <!--  immediately before the opening div tag,
+              and add  - - >  (without spaces) immediately after its closing div tag
+           3. Find the section labeled "RESOLVED BANNER"
+           4. Remove the  <!--  at the start and the  - - >  at the end to make it visible
+           5. Update the timestamp in that block
+           6. Save the file and re-upload it to the server
+    ============================================ -->
+
+    <!-- UPDATE THIS MESSAGE AND TIMESTAMP WHEN STATUS CHANGES -->
+
+    <!-- OUTAGE BANNER — SHOW THIS DURING AN OUTAGE -->
+    <section aria-label="Website Status" aria-live="polite">
+
+      <div class="status-banner status-banner--outage" role="alert">
+        <div class="status-banner__header">
+          <span class="status-banner__icon" aria-hidden="true">⚠</span>
+          <!-- H1 IS HERE — do not add another H1 to this page -->
+          <h1 class="status-banner__title">Website Temporarily Unavailable</h1>
+        </div>
+        <div class="status-banner__body">
+          <!-- UPDATE THE DATE AND TIME BELOW -->
+          <p class="status-banner__timestamp">Last Updated: <strong>[DATE/TIME — e.g., Monday, June 23, 2026 at 9:00 a.m.]</strong></p>
+          <!-- UPDATE THE MESSAGE BELOW -->
+          <p class="status-banner__message">
+            We are aware of an issue affecting palomar.edu and are working to restore service as quickly as possible.
+            Essential resources are available below. For questions or urgent assistance, submit a support request through the
+            <strong><a href="https://help.palomar.edu">Palomar College Help Center</a></strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- RESOLVED BANNER — UNCOMMENT THE BLOCK BELOW WHEN SERVICE IS RESTORED
+           (Remove the opening less-than-!-dash-dash and closing dash-dash-greater-than to make it visible,
+            and comment out or remove the OUTAGE BANNER block above.)
+
+      <div class="status-banner status-banner--resolved" role="status">
+        <div class="status-banner__header">
+          <span class="status-banner__icon" aria-hidden="true">✓</span>
+          <h1 class="status-banner__title">Service Restored</h1>
+        </div>
+        <div class="status-banner__body">
+          <p class="status-banner__timestamp">Last Updated: <strong>[DATE/TIME]</strong></p>
+          <p class="status-banner__message">
+            Palomar College website services have been restored. Please visit
+            palomar.edu to return to the main site.
+            Thank you for your patience.
+          </p>
+        </div>
+      </div>
+
+      END RESOLVED BANNER -->
+
+      <!-- SCHEDULED MAINTENANCE BANNER — UNCOMMENT BELOW FOR PLANNED OUTAGES
+           (Same instructions as above — comment out the outage banner and uncomment this one.)
+
+      <div class="status-banner status-banner--resolved" role="status">
+        <div class="status-banner__header">
+          <span class="status-banner__icon" aria-hidden="true">🔧</span>
+          <h1 class="status-banner__title">Scheduled Maintenance</h1>
+        </div>
+        <div class="status-banner__body">
+          <p class="status-banner__timestamp">Maintenance Window: <strong>[DATE/TIME RANGE]</strong></p>
+          <p class="status-banner__message">
+            Palomar College's website is undergoing scheduled maintenance and will be temporarily unavailable.
+            We expect service to be restored by <strong>[TIME]</strong>. Essential resources remain accessible below.
+          </p>
+        </div>
+      </div>
+
+      END SCHEDULED MAINTENANCE BANNER -->
+
+    </section>
+
+    <!-- ============================================
+         SECTION 2: QUICK LINKS
+    ============================================ -->
+    <section aria-labelledby="quick-links-heading">
+      <h2 class="section-heading" id="quick-links-heading">Access Essential Resources</h2>
+      <p class="section-intro">The links below connect to services that remain available during palomar.edu outages.</p>
+
+      <ul class="quick-links-grid" role="list">
+
+        <li class="quick-link-card">
+          <a href="https://outlook.com/student.palomar.edu"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Student Email — Access your student.palomar.edu Microsoft Outlook email (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">📧</span>
+            <span class="quick-link-card__title">Student Email</span>
+            <span class="quick-link-card__desc">Access your @student.palomar.edu Microsoft Outlook email</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+        <li class="quick-link-card">
+          <a href="https://outlook.com/palomar.edu"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Employee Email — Access your palomar.edu Microsoft Outlook email (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">👤</span>
+            <span class="quick-link-card__title">Employee Email</span>
+            <span class="quick-link-card__desc">Access your @palomar.edu Microsoft Outlook email</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+        <li class="quick-link-card">
+          <a href="https://mypalomar.palomar.edu"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="MyPalomar Student Portal — Registration, financial aid, student records (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">🎓</span>
+            <span class="quick-link-card__title">MyPalomar</span>
+            <span class="quick-link-card__desc">Student portal: registration, financial aid, student records</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+        <li class="quick-link-card">
+          <a href="https://palomar.instructure.com"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Canvas Learning Management System — Access your courses, assignments, and grades (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">📚</span>
+            <span class="quick-link-card__title">Canvas (LMS)</span>
+            <span class="quick-link-card__desc">Access your courses, assignments, and grades</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+        <li class="quick-link-card">
+          <a href="https://help.palomar.edu/"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Palomar College Help Center — Submit a help request or get technical support (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">🆘</span>
+            <span class="quick-link-card__title">Palomar College Help Center</span>
+            <span class="quick-link-card__desc">Submit a help request or get technical support</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+        <li class="quick-link-card">
+          <a href="https://myapps.microsoft.com/"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Single Sign-On — Palomar Single Sign-On portal (opens in new tab)">
+            <span class="quick-link-card__icon" aria-hidden="true">🖥️</span>
+            <span class="quick-link-card__title">Single Sign-On</span>
+            <span class="quick-link-card__desc">Palomar Single Sign-On portal</span>
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ============================================
+         SECTION 3: CONTACT INFORMATION
+    ============================================ -->
+    <section aria-labelledby="contact-heading">
+      <h2 class="section-heading" id="contact-heading">Need Help?</h2>
+
+      <div class="contact-card">
+        <p>For technical support, account issues, and academic technology help, visit the <a href="https://help.palomar.edu">Palomar College Help Center</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECTION 4: CAMPUS LOCATIONS
+    ============================================ -->
+    <section aria-labelledby="locations-heading">
+      <h2 class="section-heading" id="locations-heading">Campus Locations</h2>
+
+      <ul class="locations-list" role="list">
+
+        <li>
+          <span class="location-name">San Marcos Campus (Main)</span>
+          <span class="location-detail">1140 W. Mission Road, San Marcos, CA 92069 &mdash; (760) 744-1150</span>
+        </li>
+
+        <li>
+          <span class="location-name">Escondido Education Center</span>
+          <span class="location-detail">1951 East Valley Parkway, Escondido, CA 92027 &mdash; (760) 744-1150, ext. 8134</span>
+        </li>
+
+        <li>
+          <span class="location-name">Fallbrook Education Center</span>
+          <span class="location-detail">35090 Horse Ranch Creek Road, Fallbrook, CA 92028 &mdash; (760) 744-1150, ext. 8464</span>
+        </li>
+
+        <li>
+          <span class="location-name">Rancho Bernardo Education Center</span>
+          <span class="location-detail">11111 Rancho Bernardo Road, San Diego, CA 92127 &mdash; (760) 744-1150, ext. 8464</span>
+        </li>
+
+        <li>
+          <span class="location-name">Camp Pendleton Education Center</span>
+          <span class="location-detail">Base Education Center, Bldg. 1331, Camp Pendleton, CA 92055 &mdash; (760) 725-6626</span>
+        </li>
+
+      </ul>
+
+      <p class="locations-note">
+        Campus maps and additional location details will be available at palomar.edu/about/locations/ when the main site is restored.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- ============================================
+       SECTION 5: FOOTER
+  ============================================ -->
+  <footer class="site-footer" role="contentinfo">
+    <p>&copy; Palomar Community College District. All Rights Reserved.</p>
+    <p class="footer-note">This is a temporary status page. Visit <strong>palomar.edu</strong> when service is restored.</p>
+  </footer>
+
+</body>
+</html>
