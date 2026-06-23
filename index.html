@@ -365,7 +365,7 @@
     }
 
     .locations-note a {
-      color: var(--color-red);
+      color: #b5101a;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
@@ -483,7 +483,7 @@
     <!-- UPDATE THIS MESSAGE AND TIMESTAMP WHEN STATUS CHANGES -->
 
     <!-- OUTAGE BANNER — SHOW THIS DURING AN OUTAGE -->
-    <section aria-label="Website Status" aria-live="polite">
+    <section aria-label="Website Status">
 
       <div class="status-banner status-banner--outage" role="alert">
         <div class="status-banner__header">
@@ -506,6 +506,8 @@
       <!-- RESOLVED BANNER — UNCOMMENT THE BLOCK BELOW WHEN SERVICE IS RESTORED
            (Remove the opening less-than-!-dash-dash and closing dash-dash-greater-than to make it visible,
             and comment out or remove the OUTAGE BANNER block above.)
+           NOTE: This block contains an H1. Make sure the outage banner above is hidden before
+           uncommenting, so the page never has two H1 elements at the same time.
 
       <div class="status-banner status-banner--resolved" role="status">
         <div class="status-banner__header">
@@ -526,6 +528,8 @@
 
       <!-- SCHEDULED MAINTENANCE BANNER — UNCOMMENT BELOW FOR PLANNED OUTAGES
            (Same instructions as above — comment out the outage banner and uncomment this one.)
+           NOTE: This block contains an H1. Make sure the outage banner above is hidden before
+           uncommenting, so the page never has two H1 elements at the same time.
 
       <div class="status-banner status-banner--resolved" role="status">
         <div class="status-banner__header">
