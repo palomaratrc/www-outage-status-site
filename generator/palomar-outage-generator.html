@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palomar College — Outage Page Generator</title>
+  <style>
+    :root {
+      --color-red: #e9171f;
+      --color-silver: #b4babc;
+      --color-gold: #fed184;
+      --color-black: #000000;
+      --color-white: #ffffff;
+      --color-bg: #f4f4f4;
+      --color-text: #1a1a1a;
+      --color-success: #1a7a3a;
+      --font-stack: "Gill Sans", "Gill Sans MT", Arial, Helvetica, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    /* ===== GENERATOR HEADER ===== */
+    .gen-header {
+      background-color: var(--color-red);
+      color: var(--color-white);
+      padding: 1.25rem 2rem;
+      flex-shrink: 0;
+    }
+
+    .gen-header__title {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .gen-header__subtitle {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 0.15rem;
+      opacity: 0.95;
+    }
+
+    .gen-header__desc {
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+      opacity: 0.82;
+    }
+
+    /* ===== APP LAYOUT ===== */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      align-items: flex-start;
+      overflow: hidden;
+    }
+
+    /* ===== FORM PANEL ===== */
+    .panel-form {
+      flex: 0 0 40%;
+      background: var(--color-white);
+      border-right: 2px solid var(--color-silver);
+      overflow-y: auto;
+      height: calc(100vh - 105px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-form form {
+      padding: 1.25rem 1.25rem 0;
+      flex: 1;
+    }
+
+    /* ===== PREVIEW PANEL ===== */
+    .panel-preview {
+      flex: 1;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 105px);
+      display: flex;
+      flex-direction: column;
+      background: #ddd;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: #c8c8c8;
+      border-bottom: 1px solid #aaa;
+      flex-shrink: 0;
+    }
+
+    .preview-toolbar__label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #444;
+    }
+
+    .btn-refresh {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.7rem;
+      background: var(--color-white);
+      border: 1px solid #999;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-stack);
+      color: var(--color-text);
+    }
+
+    .btn-refresh:hover { background: var(--color-bg); }
+
+    #preview-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: white;
+    }
+
+    /* ===== FIELDSETS & FORM CONTROLS ===== */
+    fieldset {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    legend {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #555;
+      padding: 0 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="datetime-local"],
+    textarea {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: var(--font-stack);
+      font-size: 0.9rem;
+      color: var(--color-text);
+      background: var(--color-white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--color-red);
+      box-shadow: 0 0 0 3px rgba(233, 23, 31, 0.12);
+    }
+
+    textarea { resize: vertical; min-height: 72px; }
+
+    /* ===== RADIO GROUP ===== */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .radio-group input[type="radio"] { flex-shrink: 0; }
+
+    /* ===== CHECKBOX LIST ===== */
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .checkbox-item:last-child { border-bottom: none; }
+
+    .checkbox-item label {
+      margin: 0;
+      font-weight: 400;
+      font-size: 0.88rem;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      accent-color: var(--color-red);
+    }
+
+    .link-remove-btn {
+      background: none;
+      border: none;
+      color: #bbb;
+      font-size: 0.95rem;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .link-remove-btn:hover { color: var(--color-red); }
+
+    /* ===== ADD CUSTOM LINK ===== */
+    .add-link-section {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed #ccc;
+    }
+
+    .add-link-section p {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .add-link-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .btn-add-link {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      background: var(--color-bg);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: var(--font-stack);
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--color-text);
+      font-weight: 600;
+    }
+
+    .btn-add-link:hover { background: #e0e0e0; }
+
+    /* ===== RESTORATION TIME (conditional) ===== */
+    #restoration-group { display: none; }
+    #restoration-group.visible { display: block; }
+
+    /* ===== CONTACT BLOCKS ===== */
+    .contact-block + .contact-block {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .contact-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .contact-block-header span {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .inline-check-label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--color-text);
+    }
+
+    .inline-check-label input[type="checkbox"] {
+      accent-color: var(--color-red);
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-buttons {
+      padding: 1rem 1.25rem 1.5rem;
+      background: var(--color-white);
+      border-top: 1px solid #eee;
+      flex-shrink: 0;
+    }
+
+    .btn-download {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--color-red);
+      color: var(--color-white);
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font-stack);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+
+    .btn-download:hover { background: #c0121a; }
+
+    .btn-copy {
+      display: block;
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.55rem 1rem;
+      background: var(--color-white);
+      color: var(--color-text);
+      border: 2px solid var(--color-silver);
+      border-radius: 6px;
+      font-family: var(--font-stack);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s;
+    }
+
+    .btn-copy:hover { border-color: #888; }
+
+    .success-msg {
+      display: none;
+      padding: 0.55rem 0.9rem;
+      margin-top: 0.5rem;
+      background: #d4edda;
+      border: 1px solid #28a745;
+      border-radius: 5px;
+      color: #155724;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .success-msg.visible { display: block; }
+
+    /* ===== HELPER TEXT ===== */
+    .hint {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 0.2rem;
+    }
+
+    .req { color: var(--color-red); margin-left: 0.15rem; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 900px) {
+      .app-layout {
+        flex-direction: column;
+        overflow: visible;
+      }
+
+      .panel-form {
+        flex: none;
+        height: auto;
+        overflow-y: visible;
+        border-right: none;
+        border-bottom: 2px solid var(--color-silver);
+      }
+
+      .panel-preview {
+        position: static;
+        height: 60vw;
+        min-height: 400px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!--
+  ============================================================
+  PALOMAR COLLEGE OUTAGE PAGE GENERATOR
+  ============================================================
+  This tool generates index.html for the palomar-outage-page
+  GitHub repository (or equivalent outage status repo).
+
+  TO DEPLOY A GENERATED PAGE:
+  1. Fill out the form and click "Download index.html"
+  2. Push the downloaded file to the main branch of the
+     palomar-outage-page GitHub repository
+  3. The existing GitHub Actions workflow will automatically
+     deploy it to Azure Static Web Apps
+
+  TO HOST THIS GENERATOR:
+  Drop this file in any GitHub repo with GitHub Pages enabled
+  (Settings → Pages → Source: main branch / root or /generator).
+  No build tools, no dependencies — open in any browser.
+  ============================================================
+-->
+
+<header class="gen-header" role="banner">
+  <p class="gen-header__title">Palomar College</p>
+  <p class="gen-header__subtitle">Outage Page Generator</p>
+  <p class="gen-header__desc">Configure and download a status page to deploy during palomar.edu outages.</p>
+</header>
+
+<div class="app-layout">
+
+  <!-- ==================== LEFT: FORM ==================== -->
+  <div class="panel-form" role="main" id="form-panel">
+    <form id="gen-form" novalidate>
+
+      <!-- ── SECTION 1: STATUS ── -->
+      <fieldset>
+        <legend>1 — Status</legend>
+
+        <div class="form-group">
+          <label>Status Type <span class="req" aria-hidden="true">*</span></label>
+          <div class="radio-group" role="group" aria-label="Status type" aria-required="true">
+            <label>
+              <input type="radio" name="status-type" value="active-outage" checked>
+              🔴 Active Outage
+            </label>
+            <label>
+              <input type="radio" name="status-type" value="scheduled-maintenance">
+              🟡 Scheduled Maintenance
+            </label>
+            <label>
+              <input type="radio" name="status-type" value="service-restored">
+              🟢 Service Restored
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status-headline">Status Headline</label>
+          <input type="text" id="status-headline" name="status-headline"
+                 value="Website Temporarily Unavailable">
+          <p class="hint">Auto-fills from status type. Override as needed.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="status-message">Status Message</label>
+          <textarea id="status-message" name="status-message" rows="4">We are aware of an issue affecting palomar.edu and are working to restore service. Essential resources are available below.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="last-updated">Last Updated <span class="req" aria-hidden="true">*</span></label>
+          <input type="datetime-local" id="last-updated" name="last-updated" aria-required="true">
+        </div>
+
+        <div class="form-group">
+          <label for="contact-line">Contact for Questions</label>
+          <input type="text" id="contact-line" name="contact-line"
+                 value="Information Services Help Desk — helpdesk@palomar.edu or (760) 744-1150, ext. 2140">
+        </div>
+
+        <div class="form-group" id="restoration-group">
+          <label for="restoration-time">Estimated Restoration Time <span style="font-weight:400;color:#888;">(optional)</span></label>
+          <input type="text" id="restoration-time" name="restoration-time"
+                 placeholder="e.g., 3:00 PM today, Wednesday June 25">
+        </div>
+
+      </fieldset>
+
+      <!-- ── SECTION 2: QUICK LINKS ── -->
+      <fieldset>
+        <legend>2 — Quick Links</legend>
+        <p class="hint" style="margin-bottom:0.5rem;">Uncheck to exclude from generated page.</p>
+
+        <div id="quick-links-list"></div>
+
+        <div class="add-link-section">
+          <p>Add Custom Link</p>
+          <div class="add-link-grid">
+            <div>
+              <label for="new-label" style="font-size:0.75rem;">Label</label>
+              <input type="text" id="new-label" placeholder="Link name">
+            </div>
+            <div>
+              <label for="new-url" style="font-size:0.75rem;">URL</label>
+              <input type="url" id="new-url" placeholder="https://">
+            </div>
+          </div>
+          <div style="margin-bottom:0.35rem;">
+            <label for="new-desc" style="font-size:0.75rem;display:block;margin-bottom:0.2rem;">Description <span style="font-weight:400;color:#888;">(optional)</span></label>
+            <input type="text" id="new-desc" placeholder="Brief description">
+          </div>
+          <button type="button" class="btn-add-link" id="btn-add-link">+ Add Link</button>
+        </div>
+
+      </fieldset>
+
+      <!-- ── SECTION 3: NEED HELP? ── -->
+      <fieldset>
+        <legend>3 — Need Help?</legend>
+
+        <div class="form-group">
+          <label class="inline-check-label" style="font-size:0.88rem;">
+            <input type="checkbox" id="show-contact" checked style="accent-color:var(--color-red);">
+            Show "Need Help?" section
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="help-center-url">Help Center URL</label>
+          <input type="url" id="help-center-url" value="https://help.palomar.edu">
+        </div>
+
+      </fieldset>
+
+      <!-- ── SECTION 4: OPTIONS ── -->
+      <fieldset>
+        <legend>4 — Options</legend>
+
+        <div class="form-group">
+          <label class="inline-check-label" style="font-size:0.88rem;">
+            <input type="checkbox" id="show-locations" checked style="accent-color:var(--color-red);">
+            Show Campus Locations section
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="page-title">Page Title (browser tab)</label>
+          <input type="text" id="page-title" value="Palomar College — Website Status">
+        </div>
+
+        <div class="form-group">
+          <label for="footer-note">Footer Note</label>
+          <input type="text" id="footer-note"
+                 value="This is a temporary status page. Visit palomar.edu when service is restored.">
+        </div>
+
+      </fieldset>
+
+    </form>
+
+    <!-- ── ACTION BUTTONS ── -->
+    <div class="action-buttons">
+      <button type="button" class="btn-download" id="btn-download">
+        ⬇ Download index.html
+      </button>
+      <button type="button" class="btn-copy" id="btn-copy">
+        📋 Copy HTML
+      </button>
+      <div class="success-msg" id="success-msg" role="alert" aria-live="polite" tabindex="-1"></div>
+    </div>
+
+  </div><!-- /panel-form -->
+
+  <!-- ==================== RIGHT: PREVIEW ==================== -->
+  <div class="panel-preview" aria-label="Live preview">
+    <div class="preview-toolbar">
+      <span class="preview-toolbar__label">Live Preview</span>
+      <button type="button" class="btn-refresh" id="btn-refresh">↻ Refresh</button>
+    </div>
+    <iframe id="preview-frame"
+            title="Live preview of the generated outage page"
+            aria-label="Generated page preview"></iframe>
+  </div>
+
+</div><!-- /app-layout -->
+
+<script>
+// ============================================================
+// UTILITIES
+// ============================================================
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escAttr(s) {
+  return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function debounce(fn, ms) {
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+function formatDateTime(raw) {
+  if (!raw) return '[Date not set]';
+  const d = new Date(raw);
+  if (isNaN(d)) return raw;
+  return d.toLocaleString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const DEFAULT_LINKS = [
+  { label: 'Student Email',               desc: 'Access your @student.palomar.edu Microsoft Outlook email',    url: 'https://outlook.com/student.palomar.edu', checked: true },
+  { label: 'Employee Email',              desc: 'Access your @palomar.edu Microsoft Outlook email',            url: 'https://outlook.com/palomar.edu',         checked: true },
+  { label: 'MyPalomar',                   desc: 'Student portal: registration, financial aid, student records', url: 'https://mypalomar.palomar.edu',            checked: true },
+  { label: 'Canvas (LMS)',                desc: 'Access your courses, assignments, and grades',                url: 'https://palomar.instructure.com',          checked: true },
+  { label: 'Palomar College Help Center', desc: 'Submit a help request or get technical support',              url: 'https://help.palomar.edu/',                checked: true },
+  { label: 'Single Sign-On',              desc: 'Palomar Single Sign-On portal',                               url: 'https://myapps.microsoft.com/',            checked: true },
+];
+
+let links = DEFAULT_LINKS.map(l => ({ ...l }));
+let customLinks = [];
+
+const STATUS_DEFAULTS = {
+  'active-outage': {
+    headline: 'Website Temporarily Unavailable',
+    message:  'We are aware of an issue affecting palomar.edu and are working to restore service. Essential resources are available below.',
+    showRestoration: true,
+  },
+  'scheduled-maintenance': {
+    headline: 'Scheduled Maintenance in Progress',
+    message:  'palomar.edu is currently undergoing scheduled maintenance. We expect service to be restored by [TIME].',
+    showRestoration: true,
+  },
+  'service-restored': {
+    headline: 'Service Restored',
+    message:  'palomar.edu has been restored and is fully operational. Thank you for your patience.',
+    showRestoration: false,
+  },
+};
+
+// ============================================================
+// STATUS TYPE CHANGE
+// ============================================================
+function onStatusTypeChange() {
+  const type = document.querySelector('input[name="status-type"]:checked').value;
+  const defs = STATUS_DEFAULTS[type];
+
+  const headlineEl = document.getElementById('status-headline');
+  const messageEl  = document.getElementById('status-message');
+  const currentH   = headlineEl.value;
+  const currentM   = messageEl.value;
+
+  // Auto-update only if the current value is still one of the built-in defaults
+  const allHeadlines = Object.values(STATUS_DEFAULTS).map(d => d.headline);
+  const allMessages  = Object.values(STATUS_DEFAULTS).map(d => d.message);
+  if (allHeadlines.includes(currentH)) headlineEl.value = defs.headline;
+  if (allMessages.includes(currentM))  messageEl.value  = defs.message;
+
+  document.getElementById('restoration-group')
+    .classList.toggle('visible', defs.showRestoration);
+
+  debouncedUpdate();
+}
+
+// ============================================================
+// QUICK LINKS LIST
+// ============================================================
+function renderLinksList() {
+  const container = document.getElementById('quick-links-list');
+  container.innerHTML = '';
+
+  links.forEach((link, i) => {
+    const item = document.createElement('div');
+    item.className = 'checkbox-item';
+    item.innerHTML =
+      `<input type="checkbox" id="link-${i}" ${link.checked ? 'checked' : ''}
+              aria-label="${escAttr(link.label)}">` +
+      `<label for="link-${i}">${escHtml(link.label)}</label>`;
+    item.querySelector('input').addEventListener('change', function () {
+      links[i].checked = this.checked;
+      debouncedUpdate();
+    });
+    container.appendChild(item);
+  });
+
+  customLinks.forEach((link, i) => {
+    const item = document.createElement('div');
+    item.className = 'checkbox-item';
+    item.innerHTML =
+      `<input type="checkbox" id="custom-${i}" ${link.checked ? 'checked' : ''}
+              aria-label="${escAttr(link.label)}">` +
+      `<label for="custom-${i}">${escHtml(link.label)}` +
+        `<span style="color:#aaa;font-size:0.78rem;margin-left:0.3rem;">(${escHtml(link.url)})</span></label>` +
+      `<button type="button" class="link-remove-btn" aria-label="Remove ${escAttr(link.label)}">✕</button>`;
+    item.querySelector('input').addEventListener('change', function () {
+      customLinks[i].checked = this.checked;
+      debouncedUpdate();
+    });
+    item.querySelector('.link-remove-btn').addEventListener('click', () => {
+      customLinks.splice(i, 1);
+      renderLinksList();
+      debouncedUpdate();
+    });
+    container.appendChild(item);
+  });
+}
+
+function addCustomLink() {
+  const label = document.getElementById('new-label').value.trim();
+  const url   = document.getElementById('new-url').value.trim();
+  const desc  = document.getElementById('new-desc').value.trim();
+
+  if (!label || !url) {
+    alert('Please enter both a Label and a URL for the custom link.');
+    return;
+  }
+
+  customLinks.push({ label, url, desc, checked: true });
+  document.getElementById('new-label').value = '';
+  document.getElementById('new-url').value   = '';
+  document.getElementById('new-desc').value  = '';
+
+  renderLinksList();
+  debouncedUpdate();
+}
+
+// ============================================================
+// FORM VALUES
+// ============================================================
+function getValues() {
+  return {
+    statusType:      document.querySelector('input[name="status-type"]:checked').value,
+    headline:        document.getElementById('status-headline').value,
+    message:         document.getElementById('status-message').value,
+    lastUpdatedRaw:  document.getElementById('last-updated').value,
+    contactLine:     document.getElementById('contact-line').value,
+    restorationTime: document.getElementById('restoration-time').value,
+    pageTitle:       document.getElementById('page-title').value,
+    footerNote:      document.getElementById('footer-note').value,
+    showLocations:  document.getElementById('show-locations').checked,
+    showContact:    document.getElementById('show-contact').checked,
+    helpCenterUrl:  document.getElementById('help-center-url').value,
+  };
+}
+
+// ============================================================
+// HTML GENERATION
+// ============================================================
+const BANNER = {
+  'active-outage': {
+    icon: '⚠', role: 'alert',
+    headerBg: '#e9171f', headerFg: '#ffffff',
+    bodyBg:   '#fff3cd', border:    '#e9171f',
+    tsBg:     '#5a3000', msgFg:     '#1a1a1a',
+  },
+  'scheduled-maintenance': {
+    icon: '🔧', role: 'alert',
+    headerBg: '#92400e', headerFg: '#fef3c7',
+    bodyBg:   '#fef3c7', border:    '#92400e',
+    tsBg:     '#451a03', msgFg:     '#451a03',
+  },
+  'service-restored': {
+    icon: '✓', role: 'status',
+    headerBg: '#14532d', headerFg: '#dcfce7',
+    bodyBg:   '#dcfce7', border:    '#14532d',
+    tsBg:     '#052e16', msgFg:     '#052e16',
+  },
+};
+
+
+function generateHTML() {
+  const v = getValues();
+  const bc = BANNER[v.statusType];
+  const checkedLinks = [...links, ...customLinks].filter(l => l.checked);
+  const dateStr = formatDateTime(v.lastUpdatedRaw);
+  const showRestoration = STATUS_DEFAULTS[v.statusType].showRestoration;
+
+  const etaLine = (showRestoration && v.restorationTime)
+    ? `          <p class="status-banner__eta"><strong>Estimated Restoration:</strong> ${escHtml(v.restorationTime)}</p>\n`
+    : '';
+
+  const contactLine = v.contactLine
+    ? `          <p class="status-banner__contact"><strong>Questions?</strong> ${escHtml(v.contactLine)}</p>\n`
+    : '';
+
+  const linksHTML = checkedLinks.map(l => `
+        <li class="quick-link-card">
+          <a href="${escAttr(l.url)}"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="${escAttr(l.label)} (opens in new tab)">
+            <span class="quick-link-card__title">${escHtml(l.label)}</span>
+            ${l.desc ? `<span class="quick-link-card__desc">${escHtml(l.desc)}</span>` : ''}
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        </li>`).join('');
+
+  const quickLinksSection = checkedLinks.length > 0 ? `
+    <!-- QUICK LINKS -->
+    <section aria-labelledby="quick-links-heading">
+      <h2 class="section-heading" id="quick-links-heading">Access Essential Resources</h2>
+      <p class="section-intro">The links below connect to services that remain available during www.palomar.edu outages.</p>
+      <ul class="quick-links-grid" role="list">${linksHTML}
+      </ul>
+    </section>` : '';
+
+  const contactSection = v.showContact ? `
+    <!-- CONTACT INFO -->
+    <section aria-labelledby="contact-heading">
+      <h2 class="section-heading" id="contact-heading">Need Help?</h2>
+      <div class="contact-card">
+        <p>For technical support or account issues visit the <a href="${escAttr(v.helpCenterUrl)}">Palomar College Help Center</a>.</p>
+      </div>
+    </section>` : '';
+
+  const locationsSection = v.showLocations ? `
+    <!-- CAMPUS LOCATIONS -->
+    <section aria-labelledby="locations-heading">
+      <h2 class="section-heading" id="locations-heading">Campus Locations</h2>
+      <ul class="locations-list" role="list">
+        <li>
+          <span class="location-name">San Marcos Campus (Main)</span>
+          <span class="location-detail">1140 W. Mission Road, San Marcos, CA 92069 &mdash; (760) 744-1150</span>
+        </li>
+        <li>
+          <span class="location-name">Escondido Education Center</span>
+          <span class="location-detail">1951 East Valley Parkway, Escondido, CA 92027 &mdash; (760) 744-1150, ext. 8134</span>
+        </li>
+        <li>
+          <span class="location-name">Fallbrook Education Center</span>
+          <span class="location-detail">35090 Horse Ranch Creek Road, Fallbrook, CA 92028 &mdash; (760) 744-1150, ext. 8464</span>
+        </li>
+        <li>
+          <span class="location-name">Rancho Bernardo Education Center</span>
+          <span class="location-detail">11111 Rancho Bernardo Road, San Diego, CA 92127 &mdash; (760) 744-1150, ext. 8464</span>
+        </li>
+        <li>
+          <span class="location-name">Camp Pendleton Education Center</span>
+          <span class="location-detail">Base Education Center, Bldg. 1331, Camp Pendleton, CA 92055 &mdash; (760) 725-6626</span>
+        </li>
+      </ul>
+      <p class="locations-note">Campus maps and additional location details will be available at www.palomar.edu/about/locations/ when the main site is restored.</p>
+    </section>` : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Palomar College website status page. Check here for updates when www.palomar.edu is temporarily unavailable.">
+  <meta name="robots" content="noindex, nofollow">
+  <title>${escHtml(v.pageTitle)}</title>
+  <style>
+    :root {
+      --color-red: #e9171f;
+      --color-silver: #b4babc;
+      --color-gold: #fed184;
+      --color-white: #ffffff;
+      --color-bg: #f5f5f5;
+      --color-text: #1a1a1a;
+      --font-stack: "Gill Sans", "Gill Sans MT", Arial, Helvetica, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+    }
+
+    .skip-nav {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      z-index: 9999;
+      background: var(--color-gold);
+      color: #000;
+      font-weight: bold;
+      padding: 0.75rem 1.25rem;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+    }
+    .skip-nav:focus { top: 0; left: 0; }
+
+    :focus-visible {
+      outline: 3px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    .site-header {
+      background-color: var(--color-red);
+      color: var(--color-white);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+    .site-header__wordmark {
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .site-header__tagline {
+      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      font-style: italic;
+      margin-top: 0.35rem;
+      opacity: 0.92;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2.5rem;
+    }
+
+    /* STATUS BANNER */
+    .status-banner {
+      margin: 2rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid ${bc.border};
+    }
+    .status-banner__header {
+      background-color: ${bc.headerBg};
+      color: ${bc.headerFg};
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .status-banner__icon { font-size: 1.75rem; flex-shrink: 0; }
+    .status-banner__title { font-size: clamp(1.25rem, 3vw, 1.55rem); font-weight: 700; }
+    .status-banner__body {
+      background-color: ${bc.bodyBg};
+      padding: 1.25rem 1.5rem;
+    }
+    .status-banner__timestamp {
+      font-size: 1rem;
+      font-weight: 700;
+      color: ${bc.tsBg};
+      margin-bottom: 0.75rem;
+    }
+    .status-banner__message {
+      font-size: 1.125rem;
+      color: ${bc.msgFg};
+      line-height: 1.65;
+      margin-bottom: 0.5rem;
+    }
+    .status-banner__eta {
+      font-size: 1rem;
+      color: ${bc.msgFg};
+      margin-bottom: 0.4rem;
+    }
+    .status-banner__contact {
+      font-size: 1rem;
+      color: ${bc.msgFg};
+      margin-top: 0.5rem;
+    }
+
+    /* SECTION HEADINGS */
+    .section-heading {
+      font-size: clamp(1.4rem, 3vw, 1.85rem);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--color-red);
+      display: inline-block;
+    }
+    section { margin-bottom: 3rem; }
+    .section-intro {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.125rem;
+      color: #444;
+    }
+
+    /* QUICK LINKS GRID */
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      list-style: none;
+    }
+    @media (max-width: 780px) { .quick-links-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .quick-links-grid { grid-template-columns: 1fr; } }
+
+    .quick-link-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-left: 4px solid transparent;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.07);
+      transition: transform .18s ease, box-shadow .18s ease, border-left-color .18s ease;
+    }
+    .quick-link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.13);
+      border-left-color: var(--color-red);
+    }
+    .quick-link-card a {
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      height: 100%;
+    }
+    .quick-link-card__title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-red);
+      margin-bottom: 0.35rem;
+    }
+    .quick-link-card__desc { font-size: 1rem; color: #555; line-height: 1.5; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* CONTACT GRID */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    @media (max-width: 600px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    .contact-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-left: 4px solid var(--color-red);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.07);
+      padding: 1.35rem 1.25rem;
+    }
+    .contact-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-red);
+      margin-bottom: 0.35rem;
+    }
+    .contact-card p, .contact-card li {
+      font-size: 1.05rem;
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+    .contact-card ul { list-style: none; margin-top: 0.6rem; }
+    .contact-card li { padding: 0.1rem 0; }
+    .contact-card a { color: var(--color-red); text-decoration: underline; text-underline-offset: 2px; }
+    .contact-card a:hover { color: #b00d14; }
+    .contact-subtitle { font-size: .95rem; color: #666; font-style: italic; margin-bottom: 0.65rem; }
+
+    /* LOCATIONS */
+    .locations-list { list-style: none; margin-top: 1rem; }
+    .locations-list li {
+      background: var(--color-white);
+      border: 1px solid var(--color-silver);
+      border-radius: 6px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 0.6rem;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    .location-name { font-weight: 700; display: block; }
+    .location-detail { color: #555; font-size: 1rem; }
+    .locations-note { font-size: 1.05rem; color: #555; margin-top: 1rem; }
+
+    /* FOOTER */
+    .site-footer {
+      background-color: var(--color-text);
+      color: var(--color-white);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .site-footer p { margin-bottom: 0.5rem; opacity: .9; }
+    .site-footer .footer-note { font-style: italic; opacity: .7; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-nav" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <p class="site-header__wordmark" aria-label="Palomar College">PALOMAR COLLEGE</p>
+    <p class="site-header__tagline">Learning for Success.</p>
+  </header>
+
+  <main id="main-content">
+
+    <!-- STATUS BANNER -->
+    <section aria-label="Website Status">
+      <div class="status-banner" role="${bc.role}">
+        <div class="status-banner__header">
+          <span class="status-banner__icon" aria-hidden="true">${bc.icon}</span>
+          <h1 class="status-banner__title">${escHtml(v.headline)}</h1>
+        </div>
+        <div class="status-banner__body">
+          <p class="status-banner__timestamp">Last Updated: <strong>${escHtml(dateStr)}</strong></p>
+          <p class="status-banner__message">${escHtml(v.message)}</p>
+${etaLine}${contactLine}        </div>
+      </div>
+    </section>
+${quickLinksSection}
+${contactSection}
+${locationsSection}
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>&copy; Palomar Community College District. All Rights Reserved.</p>
+    <p class="footer-note">${escHtml(v.footerNote)}</p>
+  </footer>
+
+</body>
+</html>`;
+}
+
+// ============================================================
+// PREVIEW
+// ============================================================
+function updatePreview() {
+  document.getElementById('preview-frame').srcdoc = generateHTML();
+}
+
+const debouncedUpdate = debounce(updatePreview, 300);
+
+// ============================================================
+// DOWNLOAD
+// ============================================================
+function downloadHTML() {
+  const html = generateHTML();
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showSuccess('✓ Downloaded! Push index.html to your GitHub repo to deploy.');
+}
+
+// ============================================================
+// COPY HTML
+// ============================================================
+async function copyHTML() {
+  const html = generateHTML();
+  try {
+    await navigator.clipboard.writeText(html);
+    showSuccess('✓ Copied! HTML is in your clipboard.');
+  } catch {
+    showSuccess('⚠ Copy failed — use Download instead, or try a different browser.');
+  }
+}
+
+// ============================================================
+// SUCCESS MESSAGE
+// ============================================================
+function showSuccess(msg) {
+  const el = document.getElementById('success-msg');
+  el.textContent = msg;
+  el.classList.add('visible');
+  el.focus();
+  setTimeout(() => el.classList.remove('visible'), 6000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Set last-updated to current date/time
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('last-updated').value =
+    `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  // Render links list
+  renderLinksList();
+
+  // Show restoration group (active-outage is default)
+  document.getElementById('restoration-group').classList.add('visible');
+
+  // Status type radios
+  document.querySelectorAll('input[name="status-type"]').forEach(r => {
+    r.addEventListener('change', onStatusTypeChange);
+  });
+
+  // Add link button
+  document.getElementById('btn-add-link').addEventListener('click', addCustomLink);
+
+  // Download / Copy
+  document.getElementById('btn-download').addEventListener('click', downloadHTML);
+  document.getElementById('btn-copy').addEventListener('click', copyHTML);
+  document.getElementById('btn-refresh').addEventListener('click', updatePreview);
+
+  // Live preview on any form change
+  document.getElementById('gen-form').addEventListener('input',  debouncedUpdate);
+  document.getElementById('gen-form').addEventListener('change', debouncedUpdate);
+
+  // Also allow Enter in the Add Custom Link URL field
+  document.getElementById('new-url').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addCustomLink(); }
+  });
+
+  // Initial render
+  updatePreview();
+});
+</script>
+
+</body>
+</html>
